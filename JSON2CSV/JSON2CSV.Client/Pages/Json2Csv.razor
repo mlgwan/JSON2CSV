@@ -1,28 +1,80 @@
 ﻿@page "/json2csv"
 @rendermode InteractiveWebAssembly
 @using System.Text.Json;
+@using JSON2CSV.Shared
 
 <PageTitle>JSON2CSV</PageTitle>
 
 <h1>JSON2CSV</h1>
-<label for="json-input">JSON:</label>
-<textarea id="json-input" name="json-input" rows="10" cols="50" placeholder="Paste your JSON file here..."
-@bind=JsonInput @oninput=@HandleInput></textarea>
-
-<p>(JsonInput)</p>
+<form>
+    <label for="json-input" class="form-label">JSON:</label>
+    <textarea 
+        class="form-control @(ValidationErrors.Any() ? "is-invalid" : "is-valid")" 
+        id="json-input" 
+        name="json-input" 
+        rows="10" cols="50" 
+        placeholder="Paste your JSON file here..." 
+        @bind=JsonInput 
+        @oninput=@HandleInput
+    >
+    </textarea>
+</form>
+@if (ValidationErrors.Any()){
+    <div class="invalid-feedback d-block">
+        @foreach (var error in ValidationErrors)
+        {
+            <div>@error</div>
+        }
+    </div>
+}
 
 <button id="convert-button">Convert to CSV</button>
 
 <label for="csv-output">CSV:</label>
-<textarea id="csv-output" name="csv-output" rows="10" cols="50" readonly placeholder="Your CSV output will appear here..."></textarea>
+<textarea 
+    id="csv-output" 
+    name="csv-output" 
+    rows="10" 
+    cols="50" 
+    readonly 
+    placeholder="Your CSV output will appear here...">
+</textarea>
 
 @code {
     public string JsonInput { get; set; } = string.Empty;
 
+    public List<string> ValidationErrors { get; set; } = new List<string>{"Input is empty."};
+
+    private Json2CsvConverter Json2CsvConverter = new Json2CsvConverter();
+
     private void HandleInput(ChangeEventArgs e)
     {
         JsonInput = e.Value?.ToString() ?? string.Empty;
+        ValidationErrors = GetValidationErrorsForJsonInput(JsonInput);
     }
 
+    private List<string> GetValidationErrorsForJsonInput(string jsonInput)
+    {
+        var errors = new List<string>();
+
+        if (String.IsNullOrEmpty(jsonInput))
+        {
+            errors.Add("Input is empty.");
+        }
+
+        else if (!Json2CsvConverter.IsValidJson(jsonInput))
+        {
+            errors.Add("Input is not valid JSON.");
+        }
+        else
+        {
+            if (Json2CsvConverter.IsNestedJson(jsonInput))
+            {
+                errors.Add("Nested JSON structures are not supported.");
+            }
+        }
+
+        return errors;
+    }
 
 }

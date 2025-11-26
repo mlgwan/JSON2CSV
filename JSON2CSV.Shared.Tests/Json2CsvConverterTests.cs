@@ -1,9 +1,12 @@
+using System.Text.Json;
+
 namespace JSON2CSV.Shared.Tests
 {
     public class Json2CsvConverterTests
     {
-        #region Validation
         Json2CsvConverter Json2CsvConverter = new Json2CsvConverter();
+
+        #region Validation
 
         [Theory]
         [InlineData("")]
@@ -13,7 +16,7 @@ namespace JSON2CSV.Shared.Tests
         [InlineData(""" [{"name":"Shawn","age":12},{"name":"Ethan":"age":30}] """)]
         public void IsValidJson_NonSensicalInputs_ReturnsFalse(string input)
         {
-            var actual = Json2CsvConverter.IsValidJson(input);
+            bool actual = Json2CsvConverter.IsValidJson(input);
 
             Assert.False(actual);
         }
@@ -31,7 +34,7 @@ namespace JSON2CSV.Shared.Tests
         [InlineData(""" {"name":"Shawn","age":12} """, true)]
         public void IsValidJson_InvalidOpeningAndClosingBrackets_ReturnsExpectedValue(string input, bool expected)
         {
-            var actual = Json2CsvConverter.IsValidJson(input);
+            bool actual = Json2CsvConverter.IsValidJson(input);
 
             Assert.Equal(expected, actual);
         }
@@ -39,6 +42,28 @@ namespace JSON2CSV.Shared.Tests
         #endregion
 
         #region Nesting
+        [Theory]
+        [InlineData(""" {"name":"Shawn","age":12} """)]
+        [InlineData(""" [{"name":"Shawn","age":12},{"name":"Ethan","age":30}] """)]
+        public void IsNestedJson_InputIsNotNested_ReturnsFalse(string json)
+        {
+            bool actual = Json2CsvConverter.IsNestedJson(json);
+
+            Assert.False(actual);
+        }
+
+        [Theory]
+
+        [InlineData(""" {"name":"Shawn","age":{"value":12}} """)]
+        [InlineData(""" [{"name":"Shawn","age":12},{"name":"Ethan","age":30}, {"a":[]}] """)]
+
+        public void IsNestedJson_InputIsNested_ReturnsTrue(string json)
+        {
+            bool actual = Json2CsvConverter.IsNestedJson(json);
+
+            Assert.True(actual);
+        }
+
 
         #endregion
     }
