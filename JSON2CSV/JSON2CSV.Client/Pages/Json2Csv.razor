@@ -1,0 +1,28 @@
+﻿@page "/json2csv"
+@rendermode InteractiveWebAssembly
+@using System.Text.Json;
+
+<PageTitle>JSON2CSV</PageTitle>
+
+<h1>JSON2CSV</h1>
+<label for="json-input">JSON:</label>
+<textarea id="json-input" name="json-input" rows="10" cols="50" placeholder="Paste your JSON file here..."
+@bind=JsonInput @oninput=@HandleInput></textarea>
+
+<p>(JsonInput)</p>
+
+<button id="convert-button">Convert to CSV</button>
+
+<label for="csv-output">CSV:</label>
+<textarea id="csv-output" name="csv-output" rows="10" cols="50" readonly placeholder="Your CSV output will appear here..."></textarea>
+
+@code {
+    public string JsonInput { get; set; } = string.Empty;
+
+    private void HandleInput(ChangeEventArgs e)
+    {
+        JsonInput = e.Value?.ToString() ?? string.Empty;
+    }
+
+
+}
