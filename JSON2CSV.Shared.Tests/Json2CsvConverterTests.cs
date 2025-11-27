@@ -81,9 +81,9 @@ namespace JSON2CSV.Shared.Tests
         #region Conversion
 
         [Theory]
-        [InlineData(""" {"name":"john","age":21} """, "name,age\njohn,21")]
-        [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22},{"name":"dohn","age":23}] """, "name,age\njohn,21\nbohn,22\ndohn,23")]
-        [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22, "profession":"botanist"}] """, "name,age\njohn,21\nbohn,22\ndohn,23")]
+        [InlineData(""" {"name":"john","age":21} """, "name,age\njohn,21\n")]
+        [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22},{"name":"dohn","age":23}] """, "name,age\njohn,21\nbohn,22\ndohn,23\n")]
+        [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22, "profession":"botanist"}] """, "name,age,profession\njohn,21\nbohn,22,botanist\n")]
 
         public void ConvertJsonToCsv_ValidInput_ReturnsValidOutput(string json, string expected)
         {
@@ -102,6 +102,19 @@ namespace JSON2CSV.Shared.Tests
         {
 
             string actual = Json2CsvConverter.GetHeaderStringOfJson(json);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData(""" {"name":"john","age":21} """, "john,21\n")]
+        [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22},{"name":"dohn","age":23}] """, "john,21\nbohn,22\ndohn,23\n")]
+        [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22, "profession":"botanist"}] """, "john,21\nbohn,22,botanist\n")]
+
+        public void GetValuesStringOfJson_ValidInput_ReturnsValidOutput(string json, string expected)
+        {
+
+            string actual = Json2CsvConverter.GetValuesStringOfJson(json);
 
             Assert.Equal(expected, actual);
         }

@@ -34,10 +34,13 @@
                 }
             </div>
         }
+
     </form>
 
-
-    <button id="convert-button">Convert to CSV</button>
+    <div>
+        <button id="convert-button" onclick="@ConvertJsonToCsv" disabled="@ValidationErrors.Any()">Convert to CSV</button>
+        <button id="clear-button" onclick="">Clear</button>
+    </div>
 
     <form>
         <label for="csv-output">CSV:</label>
@@ -47,17 +50,19 @@
                   rows="10" cols="50"
                   readonly
                   placeholder="Your CSV output will appear here...">
-    </textarea>
+    @CsvOutput
+              </textarea>
     </form>
 </div>
 
 
 
 @code {
-        private IStringLocalizer _localizer;
+    private IStringLocalizer _localizer;
 
 
     public string JsonInput { get; set; } = string.Empty;
+    public string CsvOutput { get; set; } = string.Empty;
 
     public List<string> ValidationErrors { get; set; } = new List<string>{"Input is empty."};
 
@@ -67,6 +72,11 @@
     {
         JsonInput = e.Value?.ToString() ?? string.Empty;
         ValidationErrors = GetValidationErrorsForJsonInput(JsonInput);
+    }
+
+    private void ConvertJsonToCsv()
+    {
+        CsvOutput = Json2CsvConverter.ConvertJsonToCsv(JsonInput);
     }
 
     private List<string> GetValidationErrorsForJsonInput(string jsonInput)

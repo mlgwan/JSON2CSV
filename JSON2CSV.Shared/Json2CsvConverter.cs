@@ -23,21 +23,11 @@
             string headers = GetHeaderStringOfJson(json);
             string values = GetValuesStringOfJson(json);
 
-            csvResult = $"""
-                {headers}
-                {values}
-                """;
+            csvResult = $"{headers}{values}";
 
             return csvResult;
         }
 
-        public string GetValuesStringOfJson(string json)
-        {
-            string result = string.Empty;
-
-
-            return result;
-        }
         public string GetHeaderStringOfJson(string json)
         {
             string result = string.Empty;
@@ -73,7 +63,42 @@
             {
                 throw new InvalidDataException("GetHeadersOfJsonObject must be called with JsonElement of ValueKind JsonValueKind.Object.");
             }
+        }
 
+        public string GetValuesStringOfJson(string json)
+        {
+            string result = string.Empty;
+
+            //var values = new List<JsonElement>();
+            var root = JsonDocument.Parse(json).RootElement;
+
+            IEnumerable<JsonElement> elements = root.ValueKind == JsonValueKind.Array
+                ? root.EnumerateArray()
+                : new[] { root };
+
+            foreach (var element in elements)
+            {
+                var values = GetValuesOfJsonObject(element);
+                result += string.Join(',', values) + '\n';
+            }
+
+            return result;
+        }
+        private List<JsonElement> GetValuesOfJsonObject(JsonElement root)
+        {
+            if (root.ValueKind == JsonValueKind.Object)
+            {
+                var values = new List<JsonElement>();
+                foreach (var property in root.EnumerateObject())
+                {
+                    values.Add(property.Value);
+                }
+                return values;
+            }
+            else
+            {
+                throw new InvalidDataException("GetValuesOfJsonObject must be called with JsonElement of ValueKind JsonValueKind.Object.");
+            }
         }
 
         public bool IsValidJson(string json)
