@@ -39,6 +39,17 @@ namespace JSON2CSV.Shared.Tests
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public void IsValidJson_DuplicateKeys_ReturnsFalse()
+        {
+            string json = """ {"name":"john","name":21} """;
+
+            bool actual = Json2CsvConverter.IsValidJson(json);
+
+            Assert.False(actual);
+
+        }
+
         #endregion
 
         #region Nesting
@@ -64,6 +75,36 @@ namespace JSON2CSV.Shared.Tests
             Assert.True(actual);
         }
 
+
+        #endregion
+
+        #region Conversion
+
+        [Theory]
+        [InlineData(""" {"name":"john","age":21} """, "name,age\njohn,21")]
+        [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22},{"name":"dohn","age":23}] """, "name,age\njohn,21\nbohn,22\ndohn,23")]
+        [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22, "profession":"botanist"}] """, "name,age\njohn,21\nbohn,22\ndohn,23")]
+
+        public void ConvertJsonToCsv_ValidInput_ReturnsValidOutput(string json, string expected)
+        {
+
+            string actual = Json2CsvConverter.ConvertJsonToCsv(json);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData(""" {"name":"john","age":21} """, "name,age\n")]
+        [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22},{"name":"dohn","age":23}] """, "name,age\n")]
+        [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22, "profession":"botanist"}] """, "name,age,profession\n")]
+
+        public void GetHeaderStringOfJson_ValidInput_ReturnsValidOutput(string json, string expected)
+        {
+
+            string actual = Json2CsvConverter.GetHeaderStringOfJson(json);
+
+            Assert.Equal(expected, actual);
+        }
 
         #endregion
     }

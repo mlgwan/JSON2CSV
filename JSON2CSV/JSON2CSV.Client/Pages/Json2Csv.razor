@@ -1,46 +1,62 @@
 ﻿@page "/json2csv"
 @rendermode InteractiveWebAssembly
 @using System.Text.Json;
+
 @using JSON2CSV.Shared
+@using JSON2CSV.Shared.Resources
+@using Microsoft.Extensions.Localization
 
 <PageTitle>JSON2CSV</PageTitle>
 
 <h1>JSON2CSV</h1>
-<form>
-    <label for="json-input" class="form-label">JSON:</label>
-    <textarea 
-        class="form-control @(ValidationErrors.Any() ? "is-invalid" : "is-valid")" 
-        id="json-input" 
-        name="json-input" 
-        rows="10" cols="50" 
-        placeholder="Paste your JSON file here..." 
-        @bind=JsonInput 
-        @oninput=@HandleInput
-    >
+
+<div style="display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap:20px;
+">
+    <form>
+        <label for="json-input" class="form-label">JSON:</label>
+        <textarea class="form-control @(ValidationErrors.Any() ? "is-invalid" : "is-valid")"
+                  id="json-input"
+                  name="json-input"
+                  rows="10" cols="50"
+                  placeholder="Paste your JSON file here..."
+                  @bind=JsonInput
+                  @oninput=@HandleInput>
     </textarea>
-</form>
-@if (ValidationErrors.Any()){
-    <div class="invalid-feedback d-block">
-        @foreach (var error in ValidationErrors)
+        @if (ValidationErrors.Any())
         {
-            <div>@error</div>
+            <div class="invalid-feedback d-block">
+                @foreach (var error in ValidationErrors)
+                {
+                    <div>@error</div>
+                }
+            </div>
         }
-    </div>
-}
+    </form>
 
-<button id="convert-button">Convert to CSV</button>
 
-<label for="csv-output">CSV:</label>
-<textarea 
-    id="csv-output" 
-    name="csv-output" 
-    rows="10" 
-    cols="50" 
-    readonly 
-    placeholder="Your CSV output will appear here...">
-</textarea>
+    <button id="convert-button">Convert to CSV</button>
+
+    <form>
+        <label for="csv-output">CSV:</label>
+        <textarea class="form-control"
+                  id="csv-output"
+                  name="csv-output"
+                  rows="10" cols="50"
+                  readonly
+                  placeholder="Your CSV output will appear here...">
+    </textarea>
+    </form>
+</div>
+
+
 
 @code {
+        private IStringLocalizer _localizer;
+
+
     public string JsonInput { get; set; } = string.Empty;
 
     public List<string> ValidationErrors { get; set; } = new List<string>{"Input is empty."};
