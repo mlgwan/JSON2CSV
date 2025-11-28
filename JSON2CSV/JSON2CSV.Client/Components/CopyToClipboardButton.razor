@@ -1,0 +1,15 @@
+﻿@inject IJSRuntime JSRuntime
+
+<button style="margin: 5px 0 5px 0;" type="button" class="btn btn-primary" @onclick="CopyTextToClipboard" disabled="@(!IsEnabled)">Copy</button>
+
+
+@code {
+    [Parameter] public string Text { get; set; } = string.Empty;
+    [Parameter] public bool IsEnabled { get; set; } = false;
+
+    private async Task CopyTextToClipboard()
+    {
+        // Copy raw text (without colors) to clipboard
+        await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", Text);
+    }
+}

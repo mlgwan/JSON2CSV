@@ -2,10 +2,10 @@
 @rendermode InteractiveWebAssembly
 @using System.Text.Json;
 
+@using JSON2CSV.Client.Components
 @using JSON2CSV.Shared
 @using JSON2CSV.Shared.Resources
 @using Microsoft.Extensions.Localization
-
 <PageTitle>JSON2CSV</PageTitle>
 
 
@@ -56,6 +56,13 @@
     @CsvOutput
               </textarea>
     </form>
+
+    <div>
+        <CopyToClipboardButton Text="@CsvOutput" IsEnabled=@(!string.IsNullOrEmpty(CsvOutput))></CopyToClipboardButton>
+        <DownloadCsvFileButton Input="@CsvOutput" FileName="data.csv"></DownloadCsvFileButton>
+    </div>
+
+
 </div>
 
 
