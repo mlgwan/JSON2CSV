@@ -1,13 +1,13 @@
-﻿namespace JSON2CSV.Shared
+﻿using JSON2CSV.Shared.Resources;
+using System.Text.Json;
+
+namespace JSON2CSV.Shared
 {
-    using JSON2CSV.Shared.Resources;
-    using System.Reflection.PortableExecutable;
-    using System.Text.Json;
     public class Json2CsvConverter
     {
         public string ConvertJsonToCsv(string json)
         {
-            var validationCheckResult = IsValidJson(json);
+            var validationCheckResult = ValidationCheck(json);
 
             if (!validationCheckResult.Item1)
             {
@@ -67,10 +67,9 @@
         {
             string result = string.Empty;
 
-            //var values = new List<JsonElement>();
             var root = JsonDocument.Parse(json).RootElement;
 
-            IEnumerable<JsonElement> elements = root.ValueKind == JsonValueKind.Array
+            IEnumerable<JsonElement> elements = (root.ValueKind == JsonValueKind.Array)
                 ? root.EnumerateArray()
                 : new[] { root };
 
@@ -99,7 +98,7 @@
             }
         }
 
-        public (bool,string) IsValidJson(string json)
+        public (bool,string) ValidationCheck(string json)
         {
             try
             {
@@ -171,19 +170,15 @@
         {
             var root = JsonDocument.Parse(json).RootElement;
 
-            if (root.ValueKind == JsonValueKind.Object)
-            {
-                return IsNestedJsonObject(root);
-            }
+            IEnumerable<JsonElement> elements = (root.ValueKind == JsonValueKind.Array)
+            ? root.EnumerateArray()
+            : new[] { root };
 
-            else if (root.ValueKind == JsonValueKind.Array)
+            foreach (var element in elements)
             {
-                foreach (var item in root.EnumerateArray())
+                if (IsNestedJsonObject(element))
                 {
-                    if (IsNestedJsonObject(item))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 

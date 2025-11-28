@@ -16,7 +16,7 @@ namespace JSON2CSV.Shared.Tests
         [InlineData(""" [{"name":"Shawn","age":12},{"name":"Ethan":"age":30}] """)]
         public void IsValidJson_NonSensicalInputs_ReturnsFalse(string input)
         {
-            bool actual = Json2CsvConverter.IsValidJson(input).Item1;
+            bool actual = Json2CsvConverter.ValidationCheck(input).Item1;
 
             Assert.False(actual);
         }
@@ -34,7 +34,7 @@ namespace JSON2CSV.Shared.Tests
         [InlineData(""" {"name":"Shawn","age":12} """, true)]
         public void IsValidJson_InvalidOpeningAndClosingBrackets_ReturnsExpectedValue(string input, bool expected)
         {
-            bool actual = Json2CsvConverter.IsValidJson(input).Item1;
+            bool actual = Json2CsvConverter.ValidationCheck(input).Item1;
 
             Assert.Equal(expected, actual);
         }
@@ -44,7 +44,7 @@ namespace JSON2CSV.Shared.Tests
         {
             string json = """ {"name":"john","name":21} """;
 
-            bool actual = Json2CsvConverter.IsValidJson(json).Item1;
+            bool actual = Json2CsvConverter.ValidationCheck(json).Item1;
 
             Assert.False(actual);
 

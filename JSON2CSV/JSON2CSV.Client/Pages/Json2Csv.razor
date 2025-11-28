@@ -8,13 +8,14 @@
 
 <PageTitle>JSON2CSV</PageTitle>
 
-<h1>JSON2CSV</h1>
 
 <div style="display: flex;
   flex-direction: column;
   align-items: center;
   gap:20px;
 ">
+    <h1>JSON2CSV</h1>
+
     <form>
         <label for="json-input" class="form-label">JSON:</label>
         <textarea class="form-control @(ValidationErrors.Any() ? "is-invalid" : "is-valid")"
@@ -58,9 +59,6 @@
 
 
 @code {
-    private IStringLocalizer _localizer;
-
-
     public string JsonInput { get; set; } = string.Empty;
     public string CsvOutput { get; set; } = string.Empty;
 
@@ -83,13 +81,14 @@
     {
         JsonInput = string.Empty;
         CsvOutput = string.Empty;
+        ValidationErrors = GetValidationErrorsForJsonInput(JsonInput);
     }
 
     private List<string> GetValidationErrorsForJsonInput(string jsonInput)
     {
         var errors = new List<string>();
 
-        var validationCheckResult = Json2CsvConverter.IsValidJson(jsonInput);
+        var validationCheckResult = Json2CsvConverter.ValidationCheck(jsonInput);
 
         if (!validationCheckResult.Item1)
         {
