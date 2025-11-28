@@ -38,8 +38,8 @@
     </form>
 
     <div>
-        <button id="convert-button" onclick="@ConvertJsonToCsv" disabled="@ValidationErrors.Any()">Convert to CSV</button>
-        <button id="clear-button" onclick="">Clear</button>
+        <button class="btn btn-success" id="convert-button" onclick="@ConvertJsonToCsv" disabled="@ValidationErrors.Any()">Convert to CSV</button>
+        <button class="btn btn-danger" id="clear-button" onclick="@ClearText">Clear</button>
     </div>
 
     <form>
@@ -77,6 +77,12 @@
     private void ConvertJsonToCsv()
     {
         CsvOutput = Json2CsvConverter.ConvertJsonToCsv(JsonInput);
+    }
+
+    private void ClearText()
+    {
+        JsonInput = string.Empty;
+        CsvOutput = string.Empty;
     }
 
     private List<string> GetValidationErrorsForJsonInput(string jsonInput)
