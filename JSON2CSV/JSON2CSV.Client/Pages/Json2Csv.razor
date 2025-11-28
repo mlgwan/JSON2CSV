@@ -89,21 +89,11 @@
     {
         var errors = new List<string>();
 
-        if (String.IsNullOrEmpty(jsonInput))
-        {
-            errors.Add("Input is empty.");
-        }
+        var validationCheckResult = Json2CsvConverter.IsValidJson(jsonInput);
 
-        else if (!Json2CsvConverter.IsValidJson(jsonInput))
+        if (!validationCheckResult.Item1)
         {
-            errors.Add("Input is not valid JSON.");
-        }
-        else
-        {
-            if (Json2CsvConverter.IsNestedJson(jsonInput))
-            {
-                errors.Add("Nested JSON structures are not supported.");
-            }
+            errors.Add(validationCheckResult.Item2);
         }
 
         return errors;

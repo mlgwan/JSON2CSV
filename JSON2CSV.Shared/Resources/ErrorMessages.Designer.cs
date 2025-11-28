@@ -61,6 +61,15 @@ namespace JSON2CSV.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ERROR: Input contains duplicate key: {0}.
+        /// </summary>
+        public static string InputContainsDuplicateKey {
+            get {
+                return ResourceManager.GetString("InputContainsDuplicateKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Input is empty..
         /// </summary>
         public static string InputIsEmpty {
@@ -70,7 +79,7 @@ namespace JSON2CSV.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input is not valid JSON..
+        ///   Looks up a localized string similar to ERROR: Input is not valid JSON..
         /// </summary>
         public static string InvalidJson {
             get {
@@ -79,7 +88,7 @@ namespace JSON2CSV.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Nested JSON structures are not supported..
+        ///   Looks up a localized string similar to ERROR: Nested JSON structures are not supported..
         /// </summary>
         public static string NestedJson {
             get {

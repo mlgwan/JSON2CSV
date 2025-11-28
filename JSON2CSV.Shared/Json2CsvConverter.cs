@@ -7,13 +7,11 @@
     {
         public string ConvertJsonToCsv(string json)
         {
-            if (!IsValidJson(json))
+            var validationCheckResult = IsValidJson(json);
+
+            if (!validationCheckResult.Item1)
             {
-                throw new InvalidDataException(ErrorMessages.InvalidJson);
-            }
-            else if (IsValidJson(json) && IsNestedJson(json))
-            {
-                throw new InvalidDataException(ErrorMessages.NestedJson);
+                throw new InvalidDataException(validationCheckResult.Item2);
             }
 
             string csvResult = string.Empty;
@@ -101,31 +99,40 @@
             }
         }
 
-        public bool IsValidJson(string json)
+        public (bool,string) IsValidJson(string json)
         {
             try
             {
-                var document = JsonDocument.Parse(json);
+                if (string.IsNullOrEmpty(json))
+                {
+                    return (false, ErrorMessages.InputIsEmpty);
+                }
+                
+                if (IsNestedJson(json))
+                {
+                    return (false, ErrorMessages.NestedJson);
+                }
 
-                if(DoesNotContainDuplicateKeys(json))
+                var duplicationCheckResult = DoesNotContainDuplicateKeys(json);
+                if (!duplicationCheckResult.Item1)
                 {
-                    return true;
+                    return (false, string.Format(ErrorMessages.InputContainsDuplicateKey, duplicationCheckResult.Item2));
                 }
-                else
-                {
-                    return false;
-                }
+    
+                //JSON is valid
+                return (true, string.Empty);
             }
             catch
             {
-                return false;
+                return (false,ErrorMessages.InvalidJson);
             }
           }
 
-        private bool DoesNotContainDuplicateKeys(string json)
+        private (bool,string) DoesNotContainDuplicateKeys(string json)
         {
             var reader = new Utf8JsonReader(System.Text.Encoding.UTF8.GetBytes(json));
             var stack = new Stack<HashSet<string>>();
+            var duplicates = string.Empty;
 
             while (reader.Read())
             {
@@ -146,24 +153,22 @@
                             var propName = reader.GetString();
                             if (!current.Add(propName))
                             {
-                                // Duplicate key found
-                                return false;
+                                duplicates += propName + ", ";
                             }
                         }
                     break;
                 }
             }
+            if (!String.IsNullOrEmpty(duplicates))
+            {
+                return (false, duplicates.Substring(0, duplicates.Length - 2));
+            }
 
-            return true;
+            return (true,string.Empty);
         }
 
         public bool IsNestedJson(string json)
         {
-            if (!IsValidJson(json))
-            {
-                throw new InvalidDataException(ErrorMessages.InvalidJson);
-            }
-
             var root = JsonDocument.Parse(json).RootElement;
 
             if (root.ValueKind == JsonValueKind.Object)

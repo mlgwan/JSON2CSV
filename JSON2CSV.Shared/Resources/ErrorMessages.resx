@@ -117,13 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="InputContainsDuplicateKey" xml:space="preserve">
+    <value>ERROR: Input contains duplicate key: {0}</value>
+  </data>
   <data name="InputIsEmpty" xml:space="preserve">
     <value>Input is empty.</value>
   </data>
   <data name="InvalidJson" xml:space="preserve">
-    <value>Input is not valid JSON.</value>
+    <value>ERROR: Input is not valid JSON.</value>
   </data>
   <data name="NestedJson" xml:space="preserve">
-    <value>Nested JSON structures are not supported.</value>
+    <value>ERROR: Nested JSON structures are not supported.</value>
   </data>
 </root>

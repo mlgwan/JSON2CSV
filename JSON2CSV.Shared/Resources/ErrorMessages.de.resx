@@ -117,13 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="InputContainsDuplicateKey" xml:space="preserve">
+    <value>FEHLER: Die Eingabe enthält doppelte Schlüssel: {0}</value>
+  </data>
   <data name="InputIsEmpty" xml:space="preserve">
     <value>Das Eingabefeld ist leer.</value>
   </data>
   <data name="InvalidJson" xml:space="preserve">
-    <value>Die Eingabe entspricht nicht dem JSON Format</value>
+    <value>FEHLER: Die Eingabe entspricht nicht dem JSON Format</value>
   </data>
   <data name="NestedJson" xml:space="preserve">
-    <value>Verschachtelte JSON Strukturen sind nicht unterstützt.</value>
+    <value>FEHLER: Verschachtelte JSON Strukturen sind nicht unterstützt.</value>
   </data>
 </root>
