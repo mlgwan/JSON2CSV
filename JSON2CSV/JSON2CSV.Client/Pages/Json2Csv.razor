@@ -24,17 +24,19 @@
                   rows="10" cols="50"
                   placeholder="Paste your JSON file here..."
                   @bind=JsonInput
-                  @oninput=@HandleInput>
+                  @oninput=@HandleInput
+        >
     </textarea>
-        @if (ValidationErrors.Any())
-        {
-            <div class="invalid-feedback d-block">
-                @foreach (var error in ValidationErrors)
-                {
-                    <div>@error</div>
-                }
-            </div>
-        }
+    <InputFile OnChange="OnFileSelected"></InputFile>
+    @if (ValidationErrors.Any())
+    {
+        <div class="invalid-feedback d-block">
+            @foreach (var error in ValidationErrors)
+            {
+                <div>@error</div>
+            }
+        </div>
+    }
 
     </form>
 
@@ -69,7 +71,7 @@
     private void HandleInput(ChangeEventArgs e)
     {
         JsonInput = e.Value?.ToString() ?? string.Empty;
-        ValidationErrors = GetValidationErrorsForJsonInput(JsonInput);
+        RefreshValidationErrors();
     }
 
     private void ConvertJsonToCsv()
@@ -81,7 +83,7 @@
     {
         JsonInput = string.Empty;
         CsvOutput = string.Empty;
-        ValidationErrors = GetValidationErrorsForJsonInput(JsonInput);
+        RefreshValidationErrors();
     }
 
     private List<string> GetValidationErrorsForJsonInput(string jsonInput)
@@ -98,4 +100,17 @@
         return errors;
     }
 
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using var stream = file.OpenReadStream(maxAllowedSize: 10_000_000);
+        using var reader = new StreamReader(stream);
+        JsonInput = await reader.ReadToEndAsync();
+        RefreshValidationErrors();
+    }
+
+    private void RefreshValidationErrors()
+    {
+        ValidationErrors = GetValidationErrorsForJsonInput(JsonInput);
+    }
 }
