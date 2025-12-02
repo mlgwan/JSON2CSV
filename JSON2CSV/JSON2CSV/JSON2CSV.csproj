@@ -4,15 +4,15 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>00dbe103-154d-4970-b029-b007f5919bac</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="..\JSON2CSV.Client\Pages\Component.razor" Link="Component.razor" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\JSON2CSV.Client\JSON2CSV.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.22" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
   </ItemGroup>
 
 </Project>

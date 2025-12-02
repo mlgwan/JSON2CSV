@@ -1,0 +1,122 @@
+﻿@page "/csv2json"
+@rendermode InteractiveWebAssembly
+@using System.Text.Json;
+
+@using CSV2JSON.Client.Components
+@using JSON2CSV.Shared
+@using JSON2CSV.Shared.Resources
+<PageTitle>CSV2JSON</PageTitle>
+
+
+<div style="display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap:20px;
+">
+    <h1>CSV2JSON</h1>
+
+    <form>
+        <label for="csv-input" class="form-label">CSV:</label>
+        <textarea class="form-control @(ValidationErrors.Any() ? "is-invalid" : "is-valid")"
+                  id="csv-input"
+                  name="csv-input"
+                  rows="10" cols="50"
+                  placeholder="Paste your CSV file here..."
+                  @bind=CsvInput
+                  @oninput=@HandleInput
+        >
+    </textarea>
+    <InputFile OnChange="OnFileSelected"></InputFile>
+    @if (ValidationErrors.Any())
+    {
+        <div class="invalid-feedback d-block">
+            @foreach (var error in ValidationErrors)
+            {
+                <div>@error</div>
+            }
+        </div>
+    }
+
+    </form>
+
+    <div>
+        <button class="btn btn-success" id="convert-button" onclick="@ConvertCsvToJson" disabled="@ValidationErrors.Any()">Convert to JSON</button>
+        <button class="btn btn-danger" id="clear-button" onclick="@ClearText">Clear</button>
+    </div>
+
+    <form>
+        <label for="json-output">JSON:</label>
+        <textarea class="form-control"
+                  id="json-output"
+                  name="json-output"
+                  rows="10" cols="50"
+                  readonly
+                  placeholder="Your JSON output will appear here...">
+    @JsonOutput
+              </textarea>
+    </form>
+
+    <div>
+        <CopyToClipboardButton Text="@JsonOutput" IsEnabled=@(!string.IsNullOrEmpty(JsonOutput))></CopyToClipboardButton>
+        <DownloadCsvFileButton Input="@JsonOutput" FileName="data.csv"></DownloadCsvFileButton>
+    </div>
+
+
+</div>
+
+
+
+@code {
+    public string CsvInput { get; set; } = string.Empty;
+    public string JsonOutput { get; set; } = string.Empty;
+
+    public List<string> ValidationErrors { get; set; } = new List<string>{"Input is empty."};
+
+    private Json2CsvConverter Json2CsvConverter = new Json2CsvConverter();
+
+    private void HandleInput(ChangeEventArgs e)
+    {
+        CsvInput = e.Value?.ToString() ?? string.Empty;
+        RefreshValidationErrors();
+    }
+
+    private void ConvertCsvToJson()
+    {
+        //JsonOutput = Json2CsvConverter.ConvertCsv2Json(CsvInput);
+    }
+
+    private void ClearText()
+    {
+        CsvInput = string.Empty;
+        JsonOutput = string.Empty;
+        RefreshValidationErrors();
+    }
+
+    private List<string> GetValidationErrorsForJsonInput(string jsonInput)
+    {
+        var errors = new List<string>();
+
+        var validationCheckResult = Json2CsvConverter.ValidationCheck(jsonInput);
+
+        if (!validationCheckResult.Item1)
+        {
+            errors.Add(validationCheckResult.Item2);
+        }
+
+        return errors;
+    }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using var stream = file.OpenReadStream(maxAllowedSize: 10_000_000);
+        using var reader = new StreamReader(stream);
+        CsvInput = await reader.ReadToEndAsync();
+        RefreshValidationErrors();
+    }
+
+    private void RefreshValidationErrors()
+    {
+        ValidationErrors = GetValidationErrorsForJsonInput(CsvInput);
+    }
+}
