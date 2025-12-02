@@ -50,8 +50,6 @@ namespace JSON2CSV.Shared.Tests
 
         }
 
-        #endregion
-
         #region Nesting
         [Theory]
         [InlineData(""" {"name":"Shawn","age":12} """)]
@@ -77,6 +75,10 @@ namespace JSON2CSV.Shared.Tests
 
 
         #endregion
+
+        #endregion
+
+
 
         #region Conversion
 

@@ -72,7 +72,7 @@
 
     public List<string> ValidationErrors { get; set; } = new List<string>{"Input is empty."};
 
-    private Json2CsvConverter Json2CsvConverter = new Json2CsvConverter();
+    private Csv2JsonConverter Csv2JsonConverter = new();
 
     private void HandleInput(ChangeEventArgs e)
     {
@@ -82,7 +82,7 @@
 
     private void ConvertCsvToJson()
     {
-        //JsonOutput = Json2CsvConverter.ConvertCsv2Json(CsvInput);
+        JsonOutput = Csv2JsonConverter.ConvertCsv2Json(CsvInput);
     }
 
     private void ClearText()
@@ -96,7 +96,7 @@
     {
         var errors = new List<string>();
 
-        var validationCheckResult = Json2CsvConverter.ValidationCheck(jsonInput);
+        var validationCheckResult = Csv2JsonConverter.ValidationCheck(jsonInput);
 
         if (!validationCheckResult.Item1)
         {
