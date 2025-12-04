@@ -9,11 +9,11 @@
 
 @code {
     [Parameter] public string Input { get; set; } = string.Empty;
-    [Parameter] public string FileName { get; set; } = "data.csv";
+    [Parameter] public string FileName { get; set; } = "data.json";
 
 
     private async Task DownloadCsv()
     {
-        await JSRuntime.InvokeVoidAsync("downloadCsvFile", FileName, Input);
+        await JSRuntime.InvokeVoidAsync("downloadJsonFile", FileName, Input);
     }
 }

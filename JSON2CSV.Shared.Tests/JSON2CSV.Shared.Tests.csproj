@@ -23,5 +23,11 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
+	
+<ItemGroup>
+	<None Update="Files\**\*">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+</ItemGroup>
 
 </Project>

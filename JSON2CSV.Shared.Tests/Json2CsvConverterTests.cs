@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Xml.Linq;
 
 namespace JSON2CSV.Shared.Tests
 {
@@ -20,7 +21,7 @@ namespace JSON2CSV.Shared.Tests
 
             Assert.False(actual);
         }
-        
+
         [Theory]
         [InlineData(""" {"name":"Shawn","age":12] """, false)]
         [InlineData(""" ["name":"Shawn","age":12} """, false)]
@@ -82,11 +83,13 @@ namespace JSON2CSV.Shared.Tests
 
         #region Conversion
 
+        
+
         [Theory]
-        [InlineData(""" {"name":"john","age":21} """, "name,age\njohn,21\n")]
+        [InlineData(""" { "name":"john","age":21} """, "name,age\njohn,21\n")]
         [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22},{"name":"dohn","age":23}] """, "name,age\njohn,21\nbohn,22\ndohn,23\n")]
         [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22, "profession":"botanist"}] """, "name,age,profession\njohn,21\nbohn,22,botanist\n")]
-
+        [MemberData(nameof(TestDataGenerator.JsonFileCase), parameters: new object[] { "name,age,car\nJohn,30,\n" }, MemberType = typeof(TestDataGenerator))]
         public void ConvertJsonToCsv_ValidInput_ReturnsValidOutput(string json, string expected)
         {
 
@@ -99,7 +102,6 @@ namespace JSON2CSV.Shared.Tests
         [InlineData(""" {"name":"john","age":21} """, "name,age\n")]
         [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22},{"name":"dohn","age":23}] """, "name,age\n")]
         [InlineData(""" [{"name":"john","age":21},{"name":"bohn","age":22, "profession":"botanist"}] """, "name,age,profession\n")]
-
         public void GetHeaderStringOfJson_ValidInput_ReturnsValidOutput(string json, string expected)
         {
 

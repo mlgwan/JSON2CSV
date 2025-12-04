@@ -61,6 +61,15 @@ namespace JSON2CSV.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ERROR: Input contains more fields than headers in line(s): {0}.
+        /// </summary>
+        public static string CsvHasMoreFieldsThanHeaders {
+            get {
+                return ResourceManager.GetString("CsvHasMoreFieldsThanHeaders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ERROR: Input contains duplicate key: {0}.
         /// </summary>
         public static string InputContainsDuplicateKey {

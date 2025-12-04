@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <None Include="wwwroot\javascript\copyTextToClipboard.js" />
-    <None Include="wwwroot\javascript\downloadCsvFile.js" />
+    <None Include="wwwroot\javascript\downloadJsonFile.js" />
   </ItemGroup>
 
   <ItemGroup>

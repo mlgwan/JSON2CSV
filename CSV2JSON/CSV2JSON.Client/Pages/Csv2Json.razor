@@ -58,7 +58,7 @@
 
     <div>
         <CopyToClipboardButton Text="@JsonOutput" IsEnabled=@(!string.IsNullOrEmpty(JsonOutput))></CopyToClipboardButton>
-        <DownloadCsvFileButton Input="@JsonOutput" FileName="data.csv"></DownloadCsvFileButton>
+        <DownloadJsonFileButton Input="@JsonOutput" FileName="data.csv"></DownloadJsonFileButton>
     </div>
 
 
@@ -92,11 +92,11 @@
         RefreshValidationErrors();
     }
 
-    private List<string> GetValidationErrorsForJsonInput(string jsonInput)
+    private List<string> GetValidationErrorsForCsvInput(string csvInput)
     {
         var errors = new List<string>();
 
-        var validationCheckResult = Csv2JsonConverter.ValidationCheck(jsonInput);
+        var validationCheckResult = Csv2JsonConverter.ValidationCheck(csvInput);
 
         if (!validationCheckResult.Item1)
         {
@@ -117,6 +117,6 @@
 
     private void RefreshValidationErrors()
     {
-        ValidationErrors = GetValidationErrorsForJsonInput(CsvInput);
+        ValidationErrors = GetValidationErrorsForCsvInput(CsvInput);
     }
 }

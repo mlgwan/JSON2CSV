@@ -112,7 +112,7 @@ namespace JSON2CSV.Shared
                     return (false, ErrorMessages.NestedJson);
                 }
 
-                var duplicationCheckResult = DoesNotContainDuplicateKeys(json);
+                var duplicationCheckResult = DuplicationCheck(json);
                 if (!duplicationCheckResult.Item1)
                 {
                     return (false, string.Format(ErrorMessages.InputContainsDuplicateKey, duplicationCheckResult.Item2));
@@ -127,7 +127,7 @@ namespace JSON2CSV.Shared
             }
           }
 
-        private (bool,string) DoesNotContainDuplicateKeys(string json)
+        private (bool,string) DuplicationCheck(string json)
         {
             var reader = new Utf8JsonReader(System.Text.Encoding.UTF8.GetBytes(json));
             var stack = new Stack<HashSet<string>>();
