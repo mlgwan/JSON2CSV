@@ -10,14 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\javascript\downloadJsonFile.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\javascript\downloadJsonFile.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\JSON2CSV.Client\JSON2CSV.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.22" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
