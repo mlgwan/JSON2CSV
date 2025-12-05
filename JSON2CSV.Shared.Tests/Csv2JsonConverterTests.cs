@@ -49,6 +49,7 @@ namespace JSON2CSV.Shared.Tests
         [InlineData("a,b\n1", """{"a":1,"b":""}""")]
         [InlineData("s,d\n1\n, 1", """[{"s":1,"d":""},{"s":"","d":1}]""")]
         [InlineData("var values = (valueLines.Count > 0) ? valueLines[0].Split(separationCharacter).ToList() : new List<string>();\nresult += ConvertCsvLine(headers, values);", """{"var values = (valueLines.Count > 0) ? valueLines[0].Split(separationCharacter).ToList() : new List<string>()":"result += ConvertCsvLine(headers, values)","":""}""")]
+        [InlineData("""{"<script src="javascript/copyTextToClipboard.js"></script>":"<script src="javascript/downloadCsvFile.js"></script>"}""", """{"{\"<script src=\"javascript/copyTextToClipboard.js\"></script>\":\"<script src=\"javascript/downloadCsvFile.js\"></script>\"}":""}""")]
         [InlineData("username, password\nbob, hunter2\nalice, password","""[{"username":"bob","password":"hunter2"},{"username":"alice","password":"password"}]""")]
         [MemberData(nameof(TestDataGenerator.CsvFileCase), parameters: new object[] { """[{"Username":"booker12","Identifier":9012,"First name":"Rachel","Last name":"Booker"},{"Username":"grey07","Identifier":2070,"First name":"Laura","Last name":"Grey"},{"Username":"johnson81","Identifier":4081,"First name":"Craig","Last name":"Johnson"},{"Username":"jenkins46","Identifier":9346,"First name":"Mary","Last name":"Jenkins"},{"Username":"smith79","Identifier":5079,"First name":"Jamie","Last name":"Smith"}]""" }, MemberType = typeof(TestDataGenerator))]
         

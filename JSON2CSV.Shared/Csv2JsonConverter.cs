@@ -51,12 +51,40 @@ namespace JSON2CSV.Shared
             string newJsonLine = "{";
             for (int j = 0; j < headers.Count; j++)
             {
-                if (int.TryParse(paddedValues[j], out int _) || (double.TryParse(paddedValues[j], out double _))){
-                    newJsonLine += $"\"{headers[j].Trim()}\":{paddedValues[j].Trim()},";
+                var trimmedHeader = headers[j].Trim();
+                var newLineHeader = string.Empty;
+                for (int i = 0; i < trimmedHeader.Length; i++)
+                {
+                    if (trimmedHeader[i] == '"')
+                    {
+                        newLineHeader += $"\\{trimmedHeader[i]}";
+                    }
+                    else
+                    {
+                        newLineHeader += $"{trimmedHeader[i]}";
+                    }
+                }
+
+                var trimmedPaddedValues = paddedValues[j].Trim();
+                var newLinePaddedValue = string.Empty;
+                for (int i = 0; i < trimmedPaddedValues.Length; i++)
+                {
+                    if (trimmedPaddedValues[i] == '"')
+                    {
+                        newLinePaddedValue += $"\\{trimmedPaddedValues[i]}";
+                    }
+                    else
+                    {
+                        newLinePaddedValue += $"{trimmedPaddedValues[i]}";
+                    }
+                }
+
+                if (int.TryParse(newLinePaddedValue, out int _) || (double.TryParse(newLinePaddedValue, out double _))){
+                    newJsonLine += $"\"{newLineHeader}\":{newLinePaddedValue},";
                 }
                 else
                 {
-                    newJsonLine += $"\"{headers[j].Trim()}\":\"{paddedValues[j].Trim()}\",";
+                    newJsonLine += $"\"{newLineHeader}\":\"{newLinePaddedValue}\",";
                 }                    
             }
             newJsonLine = newJsonLine.Substring(0, newJsonLine.Length - 1);
