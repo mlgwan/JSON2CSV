@@ -127,7 +127,7 @@
     {
         var errors = new List<string>();
 
-        var validationCheckResult = Csv2JsonConverter.ValidationCheck(csvInput, SeparationCharacter);
+        var validationCheckResult = Csv2JsonConverter.ValidationCheck(Csv2JsonConverter.GetCsvLines(csvInput), SeparationCharacter);
 
         if (!validationCheckResult.Item1)
         {

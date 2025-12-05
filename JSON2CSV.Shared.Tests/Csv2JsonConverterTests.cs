@@ -15,7 +15,7 @@ namespace JSON2CSV.Shared.Tests
         [Fact]
         public void ValidationCheck_EmptyInput_ReturnsFalse()
         {
-             bool actual = Csv2JsonConverter.ValidationCheck("", ',').Item1;
+             bool actual = Csv2JsonConverter.ValidationCheck(Csv2JsonConverter.GetCsvLines(""), ',').Item1;
 
             Assert.False(actual);
         }
@@ -25,7 +25,7 @@ namespace JSON2CSV.Shared.Tests
         [InlineData("username; password; username\n", ';')]
         public void ValidationCheck_DuplicateKeys_ReturnsFalse(string input, char separationCharacter)
         {
-            bool actual = Csv2JsonConverter.ValidationCheck(input, separationCharacter).Item1;
+            bool actual = Csv2JsonConverter.ValidationCheck(Csv2JsonConverter.GetCsvLines(input), separationCharacter).Item1;
 
             Assert.False(actual);
         }
@@ -34,7 +34,7 @@ namespace JSON2CSV.Shared.Tests
         [InlineData("a,b,c\n1,2,3,4")]
         public void ValidationCheck_MismatchingAmountHeadersAndValues_ReturnsFalse(string input)
         {
-            bool actual = Csv2JsonConverter.ValidationCheck(input, ',').Item1;
+            bool actual = Csv2JsonConverter.ValidationCheck(Csv2JsonConverter.GetCsvLines(input), ',').Item1;
 
             Assert.False(actual);
         }

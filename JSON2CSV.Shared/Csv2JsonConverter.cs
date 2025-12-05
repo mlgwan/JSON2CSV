@@ -9,17 +9,21 @@ namespace JSON2CSV.Shared
 {
     public class Csv2JsonConverter
     {
+        public string[] GetCsvLines(string csv)
+        {
+            return csv.Trim().Split('\n');
+        }
         public string ConvertCsv2Json(string csv, char? separationCharacter = null)
         {
-
             string result = string.Empty;
+            StringBuilder sb = new StringBuilder();
 
-            var lines = csv.Trim().Split('\n');
+            var lines = GetCsvLines(csv);
             if (separationCharacter == null)
             {
-                separationCharacter = DetermineSeparationCharacter(lines[0]);
+                separationCharacter = GuessSeparationCharacter(lines[0]);
             }
-            var validationCheckResult = ValidationCheck(csv, separationCharacter.Value);
+            var validationCheckResult = ValidationCheck(lines, separationCharacter.Value);
 
             if (!validationCheckResult.Item1)
             {
@@ -32,90 +36,73 @@ namespace JSON2CSV.Shared
 
             if (valueLines.Count > 1)
             {
-                result = "[";
+                sb.Append("[");
 
                 for (int i = 0; i < valueLines.Count; i++)
                 {
                     var values = (valueLines.Count > 0) ? valueLines[i].Split(separationCharacter.Value).ToList() : new List<string>();
-                    result += ConvertCsvLine(headers, values);
+                    sb.Append(ConvertCsvLine(headers, values));
                 }
-                result = result.Substring(0, result.Length - 1);
-                result += "]";
+                sb.Length--;
+                sb.Append("]");
             }
             else
             {
                 var values = (valueLines.Count > 0) ? valueLines[0].Split(separationCharacter.Value).ToList() : new List<string>();                
-                result += ConvertCsvLine(headers, values);
-                result = result.Substring(0, result.Length - 1);
+                sb.Append(ConvertCsvLine(headers, values));
+                sb.Length--;
             }
 
-            return result;
+            return sb.ToString();
         }
 
         private string ConvertCsvLine(List<string> headers, List<string> values)
         {
-            var paddedValues = values.Concat(Enumerable.Repeat(string.Empty, headers.Count - values.Count)).Take(headers.Count).ToList();
-            string newJsonLine = "{";
+            var paddedValues = values
+                .Concat(Enumerable.Repeat(string.Empty, headers.Count - values.Count))
+                .Take(headers.Count)
+                .ToList();
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("{");
+
             for (int j = 0; j < headers.Count; j++)
             {
-                var trimmedHeader = headers[j].Trim();
-                var newLineHeader = string.Empty;
-                for (int i = 0; i < trimmedHeader.Length; i++)
-                {
-                    if (trimmedHeader[i] == '"')
-                    {
-                        newLineHeader += $"\\{trimmedHeader[i]}";
-                    }
-                    else
-                    {
-                        newLineHeader += $"{trimmedHeader[i]}";
-                    }
-                }
-
-                var trimmedPaddedValues = paddedValues[j].Trim();
-                var newLinePaddedValue = string.Empty;
-                for (int i = 0; i < trimmedPaddedValues.Length; i++)
-                {
-                    if (trimmedPaddedValues[i] == '"')
-                    {
-                        newLinePaddedValue += $"\\{trimmedPaddedValues[i]}";
-                    }
-                    else
-                    {
-                        newLinePaddedValue += $"{trimmedPaddedValues[i]}";
-                    }
-                }
+                var newLineHeader = headers[j].Trim().Replace("\"", "\\\"");
+                var newLinePaddedValue = paddedValues[j].Trim().Replace("\"", "\\\"");
 
                 if (int.TryParse(newLinePaddedValue, out int _) || (double.TryParse(newLinePaddedValue, out double _))){
-                    newJsonLine += $"\"{newLineHeader}\":{newLinePaddedValue},";
+                    sb.Append($"\"{newLineHeader}\":{newLinePaddedValue},");
                 }
                 else
                 {
-                    newJsonLine += $"\"{newLineHeader}\":\"{newLinePaddedValue}\",";
+                    sb.Append($"\"{newLineHeader}\":\"{newLinePaddedValue}\",");
                 }                    
             }
-            newJsonLine = newJsonLine.Substring(0, newJsonLine.Length - 1);
-            newJsonLine += "}";
-            return newJsonLine + ',';
+            sb.Length--;
+            sb.Append("},");
+            return sb.ToString();
         }
 
-        public (bool,string) ValidationCheck(string csv, char separationCharacter)
+        public (bool,string) ValidationCheck(string[] csvLines, char separationCharacter)
         {
-            if (string.IsNullOrEmpty(csv))
+            // Check for empty input
+            if (csvLines.Length == 0 || csvLines[0] == string.Empty)
             {
                 return (false, ErrorMessages.InputIsEmpty);
             }
 
-            var csvLines = csv.Split('\n');
             var csvHeaderLine = csvLines[0];
+            var headers = csvHeaderLine.Split(separationCharacter);
 
-            var duplicatesCheckResult = DuplicatesCheck(csvHeaderLine.Split(separationCharacter));
+            // Check for duplicate headers
+            var duplicatesCheckResult = DuplicatesCheck(headers);
             if (duplicatesCheckResult.Item1)
             {
                 return (false, string.Format(ErrorMessages.InputContainsDuplicateKey, duplicatesCheckResult.Item2));
             }
 
-            var headers = csvHeaderLine.Split(separationCharacter);
+            // Check for lines with more entries than headers
             string faultyLines = string.Empty;
             for (int i = 1; i < csvLines.Length; i++)
             {
@@ -130,6 +117,7 @@ namespace JSON2CSV.Shared
                 return (false, string.Format(ErrorMessages.CsvHasMoreFieldsThanHeaders, faultyLines.Substring(0, faultyLines.Length-1)));
             }
 
+            // Input passed validation check
             return (true, string.Empty);
         }
 
@@ -149,7 +137,7 @@ namespace JSON2CSV.Shared
             return (false, string.Empty);
         }
 
-        private char DetermineSeparationCharacter(string csv)
+        private char GuessSeparationCharacter(string csv)
         {
             return csv.Contains(',') ? ',' : csv.Contains(';') ? ';' : csv.Contains('\t') ? '\t' : '|';
         }
