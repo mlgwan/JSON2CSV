@@ -25,7 +25,22 @@
                   @oninput=@HandleInput
         >
     </textarea>
+    <div>
     <InputFile OnChange="OnFileSelected"></InputFile>
+
+    <label style="text-shadow:none;" for="separationCharacters">Separation Character:</label>
+    <select @bind="@SelectedSeparationValue" name="separationCharacters" id="separationCharacters">
+            <option default value=",">,</option>
+            <option value=";">;</option>
+            <option value="\t">Tabs</option>
+            <option value="|">|</option>
+            <option value="Other">Other</option>
+        </select>
+        @if (SelectedSeparationValue == "Other")
+        {
+            <input style="width:30px;text-align:center;" type="text" maxlength="1" @bind="CustomSeparationCharacter"/>
+        }
+        
     @if (ValidationErrors.Any())
     {
         <div class="invalid-feedback d-block">
@@ -35,7 +50,7 @@
             }
         </div>
     }
-
+    </div>
     </form>
 
     <div>
@@ -69,6 +84,23 @@
     public string CsvInput { get; set; } = string.Empty;
     public string JsonOutput { get; set; } = string.Empty;
 
+    private string SelectedSeparationValue = ",";
+    private string CustomSeparationCharacter = string.Empty;
+    public char SeparationCharacter
+    {
+        get
+        {
+            if (SelectedSeparationValue == "Other" && !string.IsNullOrEmpty(CustomSeparationCharacter))
+            {
+                return CustomSeparationCharacter[0]; 
+            }
+            if (SelectedSeparationValue == "\\t") 
+            {
+                return '\t';
+            }
+            return SelectedSeparationValue[0];
+        }
+    }
     public List<string> ValidationErrors { get; set; } = new List<string>{"Input is empty."};
 
     private Csv2JsonConverter Csv2JsonConverter = new();
@@ -81,7 +113,7 @@
 
     private void ConvertCsvToJson()
     {
-        JsonOutput = Csv2JsonConverter.ConvertCsv2Json(CsvInput);
+        JsonOutput = Csv2JsonConverter.ConvertCsv2Json(CsvInput, SeparationCharacter);
     }
 
     private void ClearText()
@@ -95,7 +127,7 @@
     {
         var errors = new List<string>();
 
-        var validationCheckResult = Csv2JsonConverter.ValidationCheck(csvInput);
+        var validationCheckResult = Csv2JsonConverter.ValidationCheck(csvInput, SeparationCharacter);
 
         if (!validationCheckResult.Item1)
         {
