@@ -1,0 +1,38 @@
+﻿@page "/json2csv"
+@rendermode InteractiveWebAssembly
+
+@if (direction)
+{
+
+    <Csv2Json></Csv2Json>
+
+    <style>
+        body{
+            background: linear-gradient(90deg,rgba(73, 178, 93, 1) 0, rgba(247, 173, 101, 1) 100%);
+        }
+    </style>
+}
+else
+{
+    <Json2Csv></Json2Csv>
+    
+    <style>
+        body{
+            background: linear-gradient(90deg,rgba(247, 173, 101, 1) 0%, rgba(73, 178, 93, 1) 100%);
+        }
+    </style>
+}
+
+<button class="btn btn-dark" onclick="@SwitchDirection">
+    @buttonText
+</button>
+
+@code{
+    bool direction = false;
+    string buttonText => (direction) ? "Convert JSON to CSV" : "Convert CSV to JSON";
+
+    void SwitchDirection()
+    {
+        direction = !direction;
+    }
+}
